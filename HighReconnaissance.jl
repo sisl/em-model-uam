@@ -4,21 +4,21 @@ Types and Constructors
 ---------------------------------------------------
 """
 
-mutable struct HIGH_RECONAISSANCE_SAMPLER <: SAMPLER
+mutable struct HIGH_RECONNAISSANCE_SAMPLER <: SAMPLER
 	z::Sampleable
 	vx::Sampleable
 	radius::Sampleable
 	arc_length::Sampleable
 end
 
-function high_reconaissance_sampler(;z = Normal(500,10),
+function high_reconnaissance_sampler(;z = Normal(500,10),
 						vx = Uniform(30,45),
 						radius = Uniform(200,400),
 						arc_length = Uniform(90,270))
-	return HIGH_RECONAISSANCE_SAMPLER(z, vx, radius, arc_length)
+	return HIGH_RECONNAISSANCE_SAMPLER(z, vx, radius, arc_length)
 end
 
-mutable struct HIGH_RECONAISSANCE <: UAM_TRAJECTORY
+mutable struct HIGH_RECONNAISSANCE <: UAM_TRAJECTORY
 	z::Float64
 	vx::Float64
 	radius::Float64
@@ -32,18 +32,18 @@ mutable struct HIGH_RECONAISSANCE <: UAM_TRAJECTORY
 	v::Array{Float64,2}
 end
 
-function high_reconaissance(;z = 0.0,
+function high_reconnaissance(;z = 0.0,
 						vx = 0.0,
 						radius = 0.0,
 						arc_length = 0.0,
-						sampler = high_reconaissance_sampler(),
+						sampler = high_reconnaissance_sampler(),
 						dt = 1.0,
 						vz_max = 550fpm2fps, # This doesn't actually get used
-						az_max = 0.3g, # This doesn't actually get used
+						az_max = 0.3g_ft, # This doesn't actually get used
 						ax_max = 0.1g, # This doesn't actually get used
 						p = zeros(1,3),
 						v = zeros(1,3))
-	return HIGH_RECONAISSANCE(z, vx, radius, arc_length, sampler, dt, 
+	return HIGH_RECONNAISSANCE(z, vx, radius, arc_length, sampler, dt, 
 								vz_max, az_max, ax_max, p, v)
 end
 
@@ -53,7 +53,7 @@ Functions
 ---------------------------------------------------
 """
 
-function solve_trajectory!(τ::HIGH_RECONAISSANCE)
+function solve_trajectory!(τ::HIGH_RECONNAISSANCE)
 	# Get the circular portion first
 	θ̇ = rad2deg(τ.vx/τ.radius)
 	arc_time = τ.arc_length/θ̇

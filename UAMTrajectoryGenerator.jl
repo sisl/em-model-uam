@@ -6,8 +6,8 @@
 using Distributions
 using Convex
 using ECOS
-using DelimitedFiles
-#using Plots
+using DataFrames
+using CSV
 
 """
 ---------------------------------------------------
@@ -17,7 +17,9 @@ Constants
 
 fpm2fps = 1/60
 ft2m = 0.3048
+m2ft = 3.28084
 g = 9.81
+g_ft = 32.2
 
 λ = 1
 
@@ -58,17 +60,16 @@ include("VerticalDescent.jl")
 include("CurvedApproach.jl")
 include("NominalTakeoff.jl")
 include("VerticalAscent.jl")
-include("HighReconaissance.jl")
-#include("MDPLanding.jl")
+include("HighReconnaissance.jl")
 
 uam_trajectories_1 = [nominal_landing(), vertical_descent(), curved_approach(),
-					nominal_takeoff(), vertical_ascent()] #, mdp_landing()]
+					nominal_takeoff(), vertical_ascent()]
 uam_trajectories_2 = [nominal_landing(), vertical_descent(), curved_approach(),
-					nominal_takeoff(), vertical_ascent(), high_reconaissance()] #, mdp_landing()]
+					nominal_takeoff(), vertical_ascent(), high_reconnaissance()]
 uam_trajectories_no_takeoff = [nominal_landing(), vertical_descent(), curved_approach(),
-							 high_reconaissance()] #, mdp_landing()]
+							 high_reconnaissance()]
 
-landing_trajectories = [NOMINAL_LANDING, VERTICAL_DESCENT, CURVED_APPROACH] #, MDP_LANDING]
+landing_trajectories = [NOMINAL_LANDING, VERTICAL_DESCENT, CURVED_APPROACH]
 takeoff_trajectories = [NOMINAL_TAKEOFF, VERTICAL_ASCENT]
 
 """
@@ -152,53 +153,21 @@ function extend!(τ::UAM_TRAJECTORY, t_length::Float64)
 	end
 end
 
-function plot_trajectory(τ::UAM_TRAJECTORY)
-	plt₁ = Plots.plot(τ.p[:,1], τ.p[:,2], τ.p[:,3]*ft2m, legend=false)
-	Plots.scatter!(plt₁, τ.p[1:2:end,1], τ.p[1:2:end,2], τ.p[1:2:end,3]*ft2m, legend=false, markersize=2)
-	display(plt₁)
-	return plt₁
-end
-
-function plot_vert_prof(τ::UAM_TRAJECTORY)
-	plt₁ = Plots.plot(τ.p[:,1], τ.p[:,3]*ft2m, 
-		aspect_ratio=:equal, ylims=(0,500ft2m), legend=false)
-	Plots.scatter!(plt₁, τ.p[1:2:end,1], τ.p[1:2:end,3]*ft2m, 
-		aspect_ratio=:equal, ylims=(0,500ft2m), legend=false, markersize=2)
-	display(plt₁)
-	return plt₁
-end
-
-function generate_random_UAM_trajectory()
-	τ = uam_trajectories[rand(1:end)]
+function generate_trajectory_file(τ::UAM_TRAJECTORY, filename::String)
 	generate_trajectory!(τ)
-	return get_trajectory(τ)
+	traj = get_trajectory(τ)
+	times = collect(range(0, step = τ.dt, length = length(traj.p[:,1])))
+	df = DataFrame(time_s = times, x_ft = traj.p[:,1].*m2ft, y_ft = traj.p[:,2].*m2ft, z_ft = traj.p[:,3])
+	CSV.write(filename, df)
 end
 
-function generate_trajectories(τ::UAM_TRAJECTORY, n::Int64)
-	τs = Vector{TRAJECTORY}()
-	for i = 1:n
-		generate_trajectory!(τ)
-		push!(τs, get_trajectory(τ))
-	end
-	return τs
-end
-
-function generate_trajectories_file(τ::UAM_TRAJECTORY, n::Int64, filename::String)
-	open(filename, "w") do f
-		write(f, "$dt\n")
-	end
-	for i = 1:n
-		generate_trajectory!(τ)
-		add_to_file(τ, filename)
-	end
-end
-
-function add_to_file(τ::UAM_TRAJECTORY, filename::String)
-	open(filename, "a") do f
-		writedlm(f, τ.p[:,1]')
-		writedlm(f, τ.p[:,2]')
-		writedlm(f, τ.p[:,3]')
-	end
+function generate_trajectory_file(filename::String)
+	τ = uam_trajectories_2[rand(1:end)]
+	generate_trajectory!(τ)
+	traj = get_trajectory(τ)
+	times = collect(range(0, step = τ.dt, length = length(traj.p[:,1])))
+	df = DataFrame(time_s = times, x_ft = traj.p[:,1].*m2ft, y_ft = traj.p[:,2].*m2ft, z_ft = traj.p[:,3])
+	CSV.write(filename, df)
 end
 
 function get_trajectory(τ::UAM_TRAJECTORY)
