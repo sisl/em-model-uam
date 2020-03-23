@@ -1,6 +1,6 @@
 # em-model-uam
 
-Repository for generating UAM trajectories and writes them to encounter files.
+Repository for generating UAM trajectories and write them to output CSV files.
 
 ## Quick Start Guide
 Ensure that the following packages are installed in your current version of Julia: `Distributions`, `Convex`, `ECOS`, `DataFrames`, `CSV`.
