@@ -170,6 +170,41 @@ function generate_trajectory_file(filename::String)
 	CSV.write(filename, df)
 end
 
+function generate_trajectory_file(τ::UAM_TRAJECTORY, filename::String, num_trajs::Int64)
+	xs = []
+	ys = []
+	zs = []
+	times = []
+	for i = 1:num_trajs
+		generate_trajectory!(τ)
+		traj = get_trajectory(τ)
+		times = [times; collect(range(0, step = τ.dt, length = length(traj.p[:,1])))]
+		xs = [xs; traj.p[:,1]].*m2ft
+		ys = [ys; traj.p[:,2]].*m2ft
+		zs = [zs; traj.p[:,3]]
+	end
+	df = DataFrame(time_s = times, x_ft = xs, y_ft = ys, z_ft = zs)
+	CSV.write(filename, df)
+end
+
+function generate_trajectory_file(filename::String, num_trajs::Int64)
+	τ = uam_trajectories_2[rand(1:end)]
+	xs = []
+	ys = []
+	zs = []
+	times = []
+	for i = 1:num_trajs
+		generate_trajectory!(τ)
+		traj = get_trajectory(τ)
+		times = [times; collect(range(0, step = τ.dt, length = length(traj.p[:,1])))]
+		xs = [xs; traj.p[:,1]].*m2ft
+		ys = [ys; traj.p[:,2]].*m2ft
+		zs = [zs; traj.p[:,3]]
+	end
+	df = DataFrame(time_s = times, x_ft = xs, y_ft = ys, z_ft = zs)
+	CSV.write(filename, df)
+end
+
 function get_trajectory(τ::UAM_TRAJECTORY)
 	p = τ.p
 	v = τ.v
