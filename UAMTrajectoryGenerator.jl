@@ -8,6 +8,7 @@ using Convex
 using ECOS
 using DataFrames
 using CSV
+using Random
 
 """
 ---------------------------------------------------
