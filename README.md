@@ -19,7 +19,13 @@ If no trajectory type is specified, a random trajectory type will be chosen and 
 generate_trajectory_file("test.csv")
 ```
 
-The first column of the resulting CSV file will be the time in sections and the following three columns will be the x-, y-, and z-position respectively in feet.
+If you want to generate more than 1 trajectory per file, you can add this as the last required argument. The following line will generate a file called "test.csv" with 3 trajectories.
+
+```
+generate_trajectory_file("test.csv", 3)
+```
+
+The first column of the resulting CSV file will be the time in seconds and the following three columns will be the x-, y-, and z-position respectively in feet. To test on your system, include the `run_uam.jl` script. It should generate a file that matches the "sample_uam_traj.csv" file.
 
 ## Type Descriptions
 `SAMPLER` - abstract type of which specific trajectory samplers are subtypes. A sampler contains the distributions of random variables associated with a particular trajectory type (e.g. initial altitude, glideslope, etc.)
@@ -54,3 +60,7 @@ solve_trajectory!(τ)
 `VerticalAscent.jl` - defines optimization problem and types for vertical ascent takeoff trajectories.
 
 `VerticalDescent.jl` - defines optimization problem and types for vertical descent landing trajectories.
+
+`run_uam.jl` - sample script for generating uam trajectory files
+
+`sample_uam_traj.csv` - sample model output for one uam trajectory
