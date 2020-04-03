@@ -5,4 +5,4 @@ include("UAMTrajectoryGenerator.jl")
 # Set the random seed
 Random.seed!(1)
 # Generate the trajectory file
-generate_trajectory_file("sample_uam_traj.csv")
+generate_trajectory_file("output/uam_traj.csv")

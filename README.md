@@ -2,12 +2,18 @@
 
 Repository for generating UAM trajectories and write them to output CSV files.
 
+This code was developed on Julia1.1.
+
 ## Quick Start Guide
-Ensure that the following packages are installed in your current version of Julia: `Distributions`, `Convex`, `ECOS`, `DataFrames`, `CSV`.
+Ensure that the following packages are installed in your current version of Julia: `Distributions`, `Convex`, `ECOS`, `DataFrames`, `CSV`.To install any of these packages that have not yet been installed, simply run:
+
+```julia
+include("setup.jl")
+```
 
 The following lines will generate a trajectory file titled "test.csv" with data for a nominal landing trajectory.
 
-```
+```julia
 include("UAMTrajectoryGenerator.jl")
 τ = nominal_landing()
 generate_trajectory_file(τ, "test.csv")
@@ -15,19 +21,21 @@ generate_trajectory_file(τ, "test.csv")
 
 If no trajectory type is specified, a random trajectory type will be chosen and generated (uniform among all possible types):
 
-```
+```julia
 generate_trajectory_file("test.csv")
 ```
 
 If you want to generate more than 1 trajectory per file, you can add this as the last required argument. The following line will generate a file called "test.csv" with 3 trajectories.
 
-```
+```julia
 generate_trajectory_file("test.csv", 3)
 ```
 
-The first column of the resulting CSV file will be the time in seconds and the following three columns will be the x-, y-, and z-position respectively in feet. To test on your system, include the `run_uam.jl` script. It should generate a file that matches the "sample_uam_traj.csv" file.
+The first column of the resulting CSV file will be the time in seconds and the following three columns will be the x-, y-, and z-position respectively in feet. To test on your system, include the `RUN_UAM.jl` script. It should generate a file in the output directory that matches the "uam_traj_ex.csv" file in the examples directory.
 
 ## Type Descriptions
+`setup.jl` - file that installs required packages that you do not currently have
+
 `SAMPLER` - abstract type of which specific trajectory samplers are subtypes. A sampler contains the distributions of random variables associated with a particular trajectory type (e.g. initial altitude, glideslope, etc.)
 
 `UAM_TRAJECTORY` - abstract type of which specific trajectory types such as `NOMINAL_LANDING` and `VERTICAL_ASCENT` are subtypes. All trajectory types contain a corresponding sampler, a time step, acceleration constraints, position, velocity, and a place to store each variable in the sampler. 
@@ -41,7 +49,7 @@ The first column of the resulting CSV file will be the time in seconds and the f
 
 If you want to hold any features constant during the trajectory, you will need to add a line after `sample_features!(τ)` gets called. For example, if you know you want a nominal landing with an starting altitude of 500 ft, using the following lines of code to generate the trajectory:
 
-```
+```julia
 τ = nominal_landing()
 sample_features!(τ)
 τ.z_init = 500
