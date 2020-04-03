@@ -34,8 +34,6 @@ generate_trajectory_file("test.csv", 3)
 The first column of the resulting CSV file will be the time in seconds and the following three columns will be the x-, y-, and z-position respectively in feet. To test on your system, include the `RUN_UAM.jl` script. It should generate a file in the output directory that matches the "uam_traj_ex.csv" file in the examples directory.
 
 ## Type Descriptions
-`setup.jl` - file that installs required packages that you do not currently have
-
 `SAMPLER` - abstract type of which specific trajectory samplers are subtypes. A sampler contains the distributions of random variables associated with a particular trajectory type (e.g. initial altitude, glideslope, etc.)
 
 `UAM_TRAJECTORY` - abstract type of which specific trajectory types such as `NOMINAL_LANDING` and `VERTICAL_ASCENT` are subtypes. All trajectory types contain a corresponding sampler, a time step, acceleration constraints, position, velocity, and a place to store each variable in the sampler. 
@@ -57,6 +55,8 @@ solve_trajectory!(τ)
 ```
 
 ## File Descriptions
+`setup.jl` - file that installs required packages that you do not currently have
+
 `UAMTrajectoryGenerator.jl` - Main file to include for UAM trajectory generation that sets up constants and types; includes all necessary files, and defines general functions for all types of trajectories.
 
 `HighReconaissance.jl` - defines functions and types for high reconaissance trajectories.
